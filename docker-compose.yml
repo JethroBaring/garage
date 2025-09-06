@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  garage:
+    image: dxflrs/garage:v0.9.0
+    container_name: garage
+    restart: unless-stopped
+    environment:
+      - RUST_LOG=garage=info
+      - GARAGE_RPC_SECRET=${RPC_SECRET}
+      - GARAGE_ADMIN_TOKEN=${ADMIN_TOKEN}
+      - GARAGE_METRICS_TOKEN=${METRICS_TOKEN}
+    volumes:
+      - garage_data:/data
+      - garage_meta:/metadata
+      - ./garage.toml:/etc/garage.toml:ro
+    expose:
+      - "3900"  # S3 API
+      - "3902"  # Web interface
+      - "3903"  # Admin API
+    command: ["garage", "server"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3903/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  garage_data:
+    driver: local
+  garage_meta:
+    driver: local
