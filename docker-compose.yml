@@ -1,31 +1,25 @@
 services:
   garage:
     image: dxflrs/garage:v0.9.0
-    container_name: garage
     restart: unless-stopped
     environment:
-      - RUST_LOG=garage=info
-      - GARAGE_RPC_SECRET=${RPC_SECRET}
-      - GARAGE_ADMIN_TOKEN=${ADMIN_TOKEN}
-      - GARAGE_METRICS_TOKEN=${METRICS_TOKEN}
+      GARAGE_RPC_SECRET: "1799bccfd7411abb9cc9a3f8c0c72caf4bf427e5e4041c057c3254ca42b9e6c5"
+      GARAGE_METADATA_DIR: "/data/meta"
+      GARAGE_DATA_DIR: "/data/data"
+      GARAGE_DB_ENGINE: "lmdb"
+      GARAGE_REPLICATION_MODE: "1"
+      GARAGE_RPC_BIND_ADDR: "[::]:3901"
+      GARAGE_RPC_PUBLIC_ADDR: "127.0.0.1:3901"
+      GARAGE_S3_REGION: "garage"
+      GARAGE_S3_API_BIND_ADDR: "[::]:3900"
+      GARAGE_S3_WEB_BIND_ADDR: "[::]:3902"
+      GARAGE_ADMIN_API_BIND_ADDR: "[::]:3903"
     volumes:
       - garage_data:/data
-      - garage_meta:/metadata
-      - ./garage.toml:/etc/garage.toml:ro
     expose:
-      - "3900"  # S3 API
-      - "3902"  # Web interface
-      - "3903"  # Admin API
-    # Remove custom command, let container use its default entrypoint
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3903/health", "||", "exit", "1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+      - "3900"
+      - "3902"
+      - "3903"
 
 volumes:
   garage_data:
-    driver: local
-  garage_meta:
-    driver: local
