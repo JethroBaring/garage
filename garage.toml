@@ -6,7 +6,6 @@ replication_mode = "1"
 
 rpc_bind_addr = "[::]:3901"
 rpc_public_addr = "127.0.0.1:3901"
-# rpc_secret will be read from environment variable GARAGE_RPC_SECRET
 
 [s3_api]
 s3_region = "garage"
@@ -20,7 +19,6 @@ index = "index.html"
 
 [admin]
 api_bind_addr = "[::]:3903"
-# admin_token and metrics_token will be read from environment variables
 
 [consul_discovery]
 consul_http_addr = ""
